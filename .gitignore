@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Claude local settings
+.claude/
+
+# macOS
+.DS_Store
+
+# Vite cache
+.vite/
