@@ -2,45 +2,31 @@ import { useState } from "react";
 
 /* ─── Figma Assets ─────────────────────────────────────────────────────────── */
 const FA = {
-  /* sidebar nav icons — refreshed from Figma node 19:205 */
-  navHome:     "https://www.figma.com/api/mcp/asset/8a854e30-4bb5-4adf-b68d-0ebe72864f1f",  /* imgPrimary3  Home          20×19.999  */
-  navSearch:   "https://www.figma.com/api/mcp/asset/e21307f5-9706-4dff-8a7d-70a142b4a7d7",  /* imgPrimary4  Global Search 19.998×19.998 */
-  navTxSearch: "https://www.figma.com/api/mcp/asset/25cbfe82-b7f9-40b9-ac8b-dac438f580cd",  /* imgPrimary5  Search Txn    20×16.25   */
-  navDrawer:   "https://www.figma.com/api/mcp/asset/f00109e5-fd96-4599-9a16-8718a8b45e20",  /* imgPrimary6  Drawer Bal    22.5×18.75 */
-  navInventory:"https://www.figma.com/api/mcp/asset/6a52f7a9-3245-41a4-949d-745f654adbec",  /* imgPrimary7  Inventory     19.998×15.937 */
-  navReports:  "https://www.figma.com/api/mcp/asset/d610a9a8-9c75-4f3b-baca-1a90286fcb86",  /* imgVector    Reports       20.033×18  */
-  navSysAdmin: "https://www.figma.com/api/mcp/asset/af29eefc-0294-4b38-b1c3-4cd069b079e2",  /* imgVector1   SysAdmin      20.005×15.006 */
-  navQmatic:   "https://www.figma.com/api/mcp/asset/c8a6bcc0-c7a6-4279-9364-eb75d3e13c47",  /* imgPrimary8  Qmatic        22.97×21.731 */
-  navSettings: "https://www.figma.com/api/mcp/asset/849e2598-183c-4c92-93c6-5b2c80ddf7e3",  /* imgPrimary9  Settings      20.222×21.25 */
-  navProfile:  "https://www.figma.com/api/mcp/asset/8fc61fd1-039c-4874-93cb-75b5773db2a1",  /* imgPrimary   Profile       17.5×20    */
-  navBell:     "https://www.figma.com/api/mcp/asset/0fecbe52-a358-4ff2-81ce-7796872a09d1",  /* imgPrimary1  Bell          17.5×20    */
-  navLogout:   "https://www.figma.com/api/mcp/asset/46e6b551-6276-453b-81ea-554f66cb23b3",  /* imgPrimary2  Logout        19.998×17.5 */
-  /* logo assets */
-  dmvCircle:   "https://www.figma.com/api/mcp/asset/ebe15903-a5e7-4890-a701-626e573de19b",  /* imgGroup30967 56×56 */
-  dmvInner:    "https://www.figma.com/api/mcp/asset/c75ba0e2-e6eb-4ee4-9ef7-ecfa5da31416",  /* imgDcDmvLogo  40×30 */
-  destinyLogo:     "/destiny-logo.png",      /* circular D icon  52×47   — sidebar bottom */
-  destinyWordmark: "/destiny-wordmark.png",  /* wordmark 153×43  — modals                */
-  /* landing page — refreshed from Figma node 19:204 / 26:445 */
-  coffeeTable: "https://www.figma.com/api/mcp/asset/1d9d5b80-905e-4591-8e84-834e92d60db6",
-  scanIcon:    "https://www.figma.com/api/mcp/asset/e6e222f3-78f4-49cb-bc30-7db9493e0270",  /* imgGroup32483 — refreshed from 26:445 */
-  /* Customer Search card illustration — Figma 26:445 */
-  csRect1:     "https://www.figma.com/api/mcp/asset/91cdd62b-b5d4-479a-9e7b-aac99e524a63",  /* document bg      */
-  csRect2:     "https://www.figma.com/api/mcp/asset/7a105487-1c51-4e0c-a121-8a215facc0cb",  /* small rect       */
-  csRect3:     "https://www.figma.com/api/mcp/asset/5163be02-e2fb-446e-8f30-1f848af6dd2d",  /* doc shadow       */
-  csPath:      "https://www.figma.com/api/mcp/asset/1ce3663a-2c55-49b1-8760-78a3f1b8ee0a",  /* card strip       */
-  csVec1:      "https://www.figma.com/api/mcp/asset/00bc1f49-af0c-4649-98c5-a38c0bdce393",  /* handle outer     */
-  csVec2:      "https://www.figma.com/api/mcp/asset/c53f27ef-47e3-4704-a8dc-c6536042cd19",  /* handle inner     */
-  csVec3:      "https://www.figma.com/api/mcp/asset/1d482214-86c2-4b1e-8e31-c9f74b4610b9",  /* hinge            */
-  csVec4:      "https://www.figma.com/api/mcp/asset/71ab35e9-1325-4798-8482-6e8ab688ede2",  /* hinge2           */
-  csRect4:     "https://www.figma.com/api/mcp/asset/dd8c3d98-15e7-4726-96dd-69b8e5ee782a",  /* handle stripe    */
-  csVec5:      "https://www.figma.com/api/mcp/asset/13b54231-f11c-45ed-8018-19d34704587e",  /* lens outer       */
-  csVec6:      "https://www.figma.com/api/mcp/asset/61cb65e2-9d4f-4251-a220-a0d9bf8b6f48",  /* lens inner       */
-  csVec7:      "https://www.figma.com/api/mcp/asset/b8a72eda-0088-4c03-bb61-8eb1c490d43b",  /* sparkle1         */
-  csVec8:      "https://www.figma.com/api/mcp/asset/138eeb03-4259-4794-8372-b18e972b5bbf",  /* sparkle2         */
-  csVec9:      "https://www.figma.com/api/mcp/asset/bef68a9c-f2a6-48a7-909d-6df5c6da9e9c",  /* sparkle3         */
-  csVec10:     "https://www.figma.com/api/mcp/asset/0f053df5-e0b2-400a-aef7-cb9f72c00293",  /* sparkle4         */
-  csVec11:     "https://www.figma.com/api/mcp/asset/9ad464c3-c747-48df-b3a1-c04b6de32b6c",  /* pin              */
-  csVec12:     "https://www.figma.com/api/mcp/asset/aec19bc9-2433-48d3-a36d-3ed8ca392c40",  /* pin2             */
+  /* nav icons → replaced with inline Icon SVG components, no FA entries needed */
+  /* logo assets — local files */
+  destinyLogo:     "/destiny-logo.png",
+  destinyWordmark: "/destiny-wordmark.png",
+  /* landing page */
+  coffeeTable: "/coffee-table.png",
+  scanIcon:    "/scan-icon.svg",
+  /* Customer Search card illustration */
+  csRect1:  "/cs-rect1.svg",
+  csRect2:  "/cs-rect2.svg",
+  csRect3:  "/cs-rect3.svg",
+  csPath:   "/cs-path.svg",
+  csVec1:   "/cs-vec1.svg",
+  csVec2:   "/cs-vec2.svg",
+  csVec3:   "/cs-vec3.svg",
+  csVec4:   "/cs-vec4.svg",
+  csRect4:  "/cs-rect4.svg",
+  csVec5:   "/cs-vec5.svg",
+  csVec6:   "/cs-vec6.svg",
+  csVec7:   "/cs-vec7.svg",
+  csVec8:   "/cs-vec8.svg",
+  csVec9:   "/cs-vec9.svg",
+  csVec10:  "/cs-vec10.svg",
+  csVec11:  "/cs-vec11.svg",
+  csVec12:  "/cs-vec12.svg",
 };
 
 /* ─── Font ─────────────────────────────────────────────────────────────────── */
@@ -239,6 +225,7 @@ export default function DrawerBalancing() {
   const [supvName,        setSupvName]        = useState("");
   const [supvLocation,    setSupvLocation]    = useState(LOCATIONS[0]);
   const [supvCsr,         setSupvCsr]         = useState("");
+  const [isAdminClose,    setIsAdminClose]    = useState(false); // tracks admin closing another user's drawer
 
   // cash calculator
   const [showCashCalc, setShowCashCalc] = useState(false);
@@ -319,15 +306,35 @@ export default function DrawerBalancing() {
     setDrawer(d=>({...d,[field]:autoFmt(d[field])}));
   };
 
+  const resetToLanding = () => {
+    setPhase("landing");
+    setDrawer(EMPTY_DRAWER);
+    setPickups([]);
+    setBeginVal(""); setBeginLocked(false);
+    setIsReconcile(false);
+    setPastBlocked(false);
+    setIsAdminClose(false);
+  };
+
   const handleCloseOut = () => {
     if (hasDiff) { setShowOvr(true); }
-    else { setPhase("closed"); }
+    else {
+      setPhase("closed");
+      if (isAdminClose) setTimeout(resetToLanding, 1500);
+    }
   };
 
   const handleOvrSubmit = () => {
     if (!ovrLogin||!ovrPass||!ovrReason) { setOvrErr("All fields are required."); return; }
     setOvrErr(""); setOvrOk(true);
-    setTimeout(()=>{ setPhase("closed"); setShowOvr(false); setOvrOk(false); },1600);
+    setTimeout(()=>{
+      if (isAdminClose) {
+        setShowOvr(false); setOvrOk(false);
+        resetToLanding();
+      } else {
+        setPhase("closed"); setShowOvr(false); setOvrOk(false);
+      }
+    }, 1600);
   };
 
   const handleSupvCloseDr = (dr) => {
@@ -347,6 +354,7 @@ export default function DrawerBalancing() {
     setPickups([]);
     setPhase("closing");
     setSupervisorMode(false);
+    setIsAdminClose(true);
   };
 
   const handleAfterReconcile = () => {
@@ -449,20 +457,21 @@ export default function DrawerBalancing() {
       {(()=>{
         const drawerActive = phase!=="landing"&&!supervisorMode;
         const drawerDot    = drawerActive?(isClosed?"#8E24AA":isClosing?"#F59E0B":"#10B981"):null;
-        /* Nav items — Figma order & exact icon sizes */
+        /* Nav items — inline SVG icons (no external deps) */
+        const IC = "rgba(255,255,255,0.75)";
         const navItems = [
-          {key:"home",      src:FA.navHome,      w:20,      h:19.999,  title:"Home"},
-          {key:"search",    src:FA.navSearch,    w:19.998,  h:19.998,  title:"Global Search"},
-          {key:"txsearch",  src:FA.navTxSearch,  w:20,      h:16.25,   title:"Search Transaction"},
-          {key:"drawer",    src:FA.navDrawer,    w:22.5,    h:18.75,
+          {key:"home",      icon:<Icon.Home color={IC} s={20}/>,         title:"Home"},
+          {key:"search",    icon:<Icon.SearchNav color={IC} s={20}/>,    title:"Global Search"},
+          {key:"txsearch",  icon:<Icon.QRScan color={IC} s={20}/>,       title:"Search Transaction"},
+          {key:"drawer",    icon:<Icon.DollarCircle color={drawerActive?"#FFF":IC} s={20}/>,
            title: drawerActive?"Drawer open":"Open Drawer Balance",
            onClick: (!drawerActive&&!supervisorMode) ? ()=>{ setDrawerNum(autoDrawer()); setShowOpenModal(true); } : null,
            active:drawerActive, dot:drawerDot},
-          {key:"inventory", src:FA.navInventory, w:19.998,  h:15.937,  title:"Inventory"},
-          {key:"reports",   src:FA.navReports,   w:20.033,  h:18,      title:"Reports"},
-          {key:"sysadmin",  src:FA.navSysAdmin,  w:20.005,  h:15.006,  title:"System Administration"},
-          {key:"qmatic",    src:FA.navQmatic,    w:22.97,   h:21.731,  title:"Qmatic"},
-          {key:"settings",  src:FA.navSettings,  w:20.222,  h:21.25,   title:"Settings"},
+          {key:"inventory", icon:<Icon.Tasks color={IC} s={20}/>,        title:"Inventory"},
+          {key:"reports",   icon:<Icon.DocSearch color={IC} s={20}/>,    title:"Reports"},
+          {key:"sysadmin",  icon:<Icon.CalendarGear color={IC} s={20}/>, title:"System Administration"},
+          {key:"qmatic",    icon:<Icon.CustomerTag color={IC} s={20}/>,  title:"Qmatic"},
+          {key:"settings",  icon:<Icon.Gear color={IC} s={20}/>,         title:"Settings"},
         ];
         const sep = <div style={{width:56,height:1,background:"rgba(255,255,255,0.2)",margin:"0 auto",flexShrink:0}}/>;
         return (
@@ -481,15 +490,15 @@ export default function DrawerBalancing() {
                 title={supervisorMode?"Exit Admin Mode":"Supervisor Login"}
                 onClick={()=>supervisorMode?setSupervisorMode(false):setShowSupvLogin(true)}
                 style={{
-                  position:"relative",width:56,height:56,borderRadius:"50%",
+                  width:56,height:56,borderRadius:"50%",
                   cursor:"pointer",flexShrink:0,overflow:"hidden",
+                  background:"#FFF",
                   border:supervisorMode?"2.5px solid rgba(245,158,11,0.9)":"2.5px solid transparent",
                   transition:"border .15s",
+                  display:"flex",alignItems:"center",justifyContent:"center",
                 }}>
-                <img src={FA.dmvCircle} alt="" style={{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}/>
-                <div style={{position:"absolute",top:"25%",left:"14.29%",right:"14.29%",bottom:"21.43%"}}>
-                  <img src={FA.dmvInner} alt="DC DMV" style={{width:"100%",height:"100%",display:"block"}}/>
-                </div>
+                <img src="/dmv-logo.png" alt="DC DMV"
+                  style={{width:"80%",height:"80%",display:"block",objectFit:"contain"}}/>
               </div>
             </div>
 
@@ -506,8 +515,7 @@ export default function DrawerBalancing() {
                     transition:"background .15s",
                     outline:"none",
                   }}>
-                  <img src={item.src} alt={item.title}
-                    style={{width:item.w,height:item.h,display:"block",objectFit:"contain"}}/>
+                  {item.icon}
                   {item.dot&&<div style={{
                     position:"absolute",top:12,right:18,
                     width:7,height:7,borderRadius:"50%",
@@ -521,14 +529,14 @@ export default function DrawerBalancing() {
             <div style={{width:"100%",flexShrink:0}}>
               {sep}
               {[
-                {src:FA.navProfile, w:17.5, h:20,   title:"Profile"},
-                {src:FA.navBell,    w:17.5, h:20,   title:"Notifications"},
-              ].map(({src,w,h,title})=>(
+                {icon:<Icon.Person color="rgba(255,255,255,0.75)" s={20}/>, title:"Profile"},
+                {icon:<Icon.Bell color="rgba(255,255,255,0.75)" s={20}/>,   title:"Notifications"},
+              ].map(({icon,title})=>(
                 <div key={title} title={title} style={{
                   display:"flex",height:52,width:"100%",
                   alignItems:"center",justifyContent:"center",cursor:"pointer",outline:"none",
                 }}>
-                  <img src={src} alt={title} style={{width:w,height:h,display:"block"}}/>
+                  {icon}
                 </div>
               ))}
               {sep}
@@ -536,8 +544,7 @@ export default function DrawerBalancing() {
                 display:"flex",height:52,width:"100%",
                 alignItems:"center",justifyContent:"center",cursor:"pointer",outline:"none",
               }}>
-                <img src={FA.navLogout} alt="Sign Out"
-                  style={{width:19.998,height:17.5,display:"block",transform:"scale(-1,1)"}}/>
+                <Icon.LogOut color="rgba(255,255,255,0.75)" s={20}/>
               </div>
             </div>
 
