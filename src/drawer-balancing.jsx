@@ -244,7 +244,7 @@ export default function DrawerBalancing() {
     + pv(drawer.moneyOrder)+pv(drawer.reverseATM)+pv(drawer.mou);
   const lessBegin = pv(beginVal);
   const drNet     = drTotal - lessBegin;
-  const disc      = drNet - (sysTotal + pickTotal);
+  const disc      = drTotal - (sysTotal + pickTotal);
   const hasDiff   = Math.abs(disc) > 0.005;
 
   /* ── handlers ── */
@@ -934,7 +934,7 @@ export default function DrawerBalancing() {
                             {hasDiff && (
                               <div style={{fontSize:11,color:C.inkSoft,marginTop:2}}>
                                 System expects <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(sysTotal+pickTotal)}</span>
-                                {" · "}Drawer net is <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(drNet)}</span>
+                                {" · "}Drawer total is <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(drTotal)}</span>
                                 {" · "}Supervisor approval required
                               </div>
                             )}
