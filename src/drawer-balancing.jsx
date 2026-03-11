@@ -1336,6 +1336,7 @@ export default function DrawerBalancing() {
           pickups={pickups} pickTotal={pickTotal}
           drTotal={drTotal} drNet={drNet} disc={disc} hasDiff={hasDiff}
           isReconcile={isReconcile} ovrSupervisorName={ovrSupervisorName}
+          isAdminClose={isAdminClose} adminName={supvName}
           onClose={()=>setShowPrintReport(false)}
         />
       )}
@@ -1650,7 +1651,7 @@ function CashCalculatorModal({calcBills,setCalcBills,calcCoins,setCalcCoins,onAp
 }
 
 /* ─── Print Report Modal ─────────────────────────────────────────────────────── */
-function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,sysTotal,drawer,pickups,pickTotal,drTotal,drNet,disc,hasDiff,isReconcile,ovrSupervisorName,onClose}) {
+function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,sysTotal,drawer,pickups,pickTotal,drTotal,drNet,disc,hasDiff,isReconcile,ovrSupervisorName,isAdminClose,adminName,onClose}) {
   const Row = ({label,value,bold,color}) => (
     <div style={{display:"flex",justifyContent:"space-between",padding:"4px 0",
       borderBottom:"1px solid #F3F4F6"}}>
@@ -1767,6 +1768,10 @@ function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,s
               {hasDiff && ovrSupervisorName && (
                 <Row label="Override Approved By" value={ovrSupervisorName}
                   bold color="#166534"/>
+              )}
+              {isAdminClose && (
+                <Row label="Closed By Supervisor" value={adminName || ovrSupervisorName || "SUPERVISOR"}
+                  bold color="#1D4ED8"/>
               )}
             </Section>
 
