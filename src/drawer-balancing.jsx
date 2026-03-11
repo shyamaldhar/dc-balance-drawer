@@ -211,13 +211,15 @@ export default function DrawerBalancing() {
   const [drawer,     setDrawer]     = useState(EMPTY_DRAWER);
 
   // supervisor override (discrepancy)
-  const [showOvr,    setShowOvr]    = useState(false);
-  const [ovrOk,      setOvrOk]      = useState(false);
-  const [ovrLogin,   setOvrLogin]   = useState("");
-  const [ovrPass,    setOvrPass]    = useState("");
-  const [ovrReason,  setOvrReason]  = useState("");
-  const [showPass,   setShowPass]   = useState(false);
-  const [ovrErr,     setOvrErr]     = useState("");
+  const [showOvr,         setShowOvr]         = useState(false);
+  const [ovrOk,           setOvrOk]           = useState(false);
+  const [ovrLogin,        setOvrLogin]        = useState("");
+  const [ovrPass,         setOvrPass]         = useState("");
+  const [ovrReason,       setOvrReason]       = useState("");
+  const [showPass,        setShowPass]        = useState(false);
+  const [ovrErr,          setOvrErr]          = useState("");
+  const [ovrApproved,     setOvrApproved]     = useState(false); // override approved; waiting for CSR to confirm close
+  const [ovrSupervisorName, setOvrSupervisorName] = useState(""); // supervisor name for print report
 
   // supervisor admin mode
   const [supervisorMode,  setSupervisorMode]  = useState(false);
@@ -226,6 +228,7 @@ export default function DrawerBalancing() {
   const [supvLocation,    setSupvLocation]    = useState(LOCATIONS[0]);
   const [supvCsr,         setSupvCsr]         = useState("");
   const [isAdminClose,    setIsAdminClose]    = useState(false); // tracks admin closing another user's drawer
+  const [closedByAdminIds, setClosedByAdminIds] = useState([]); // drawer IDs closed by admin this session
 
   // cash calculator
   const [showCashCalc, setShowCashCalc] = useState(false);
@@ -314,14 +317,24 @@ export default function DrawerBalancing() {
     setIsReconcile(false);
     setPastBlocked(false);
     setIsAdminClose(false);
+    setOvrApproved(false); setOvrSupervisorName("");
+  };
+
+  const returnToAdminMode = () => {
+    setPhase("landing");
+    setDrawer(EMPTY_DRAWER);
+    setPickups([]);
+    setBeginVal(""); setBeginLocked(false);
+    setIsReconcile(false);
+    setPastBlocked(false);
+    setIsAdminClose(false);
+    setOvrApproved(false); setOvrSupervisorName("");
+    setSupervisorMode(true);
   };
 
   const handleCloseOut = () => {
     if (hasDiff) { setShowOvr(true); }
-    else {
-      setPhase("closed");
-      if (isAdminClose) setTimeout(resetToLanding, 1500);
-    }
+    else { setPhase("closed"); }
   };
 
   const handleOvrSubmit = () => {
@@ -329,10 +342,13 @@ export default function DrawerBalancing() {
     setOvrErr(""); setOvrOk(true);
     setTimeout(()=>{
       if (isAdminClose) {
-        setShowOvr(false); setOvrOk(false);
-        resetToLanding();
-      } else {
+        // Admin closed the drawer — go straight to closed screen
+        setOvrSupervisorName(ovrLogin);
         setPhase("closed"); setShowOvr(false); setOvrOk(false);
+      } else {
+        // CSR flow — return control to CSR to confirm close
+        setOvrApproved(true); setOvrSupervisorName(ovrLogin);
+        setShowOvr(false); setOvrOk(false);
       }
     }, 1600);
   };
@@ -355,6 +371,7 @@ export default function DrawerBalancing() {
     setPhase("closing");
     setSupervisorMode(false);
     setIsAdminClose(true);
+    setClosedByAdminIds(prev => [...prev, dr.id]);
   };
 
   const handleAfterReconcile = () => {
@@ -582,6 +599,7 @@ export default function DrawerBalancing() {
             setSupvCsr={setSupvCsr}
             onExit={()=>setSupervisorMode(false)}
             onCloseDrawer={handleSupvCloseDr}
+            closedByAdminIds={closedByAdminIds}
           />
         )}
 
@@ -646,7 +664,15 @@ export default function DrawerBalancing() {
                         </span>
                       </div>
                       <div style={{display:"flex",gap:8,alignItems:"center",flexShrink:0}}>
-                        {isReconcile && !pendingPastCleared && (
+                        {isAdminClose && (
+                          <button onClick={returnToAdminMode} style={{
+                            padding:"6px 16px",background:C.blue,color:"#FFF",border:"none",
+                            borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer",
+                            boxShadow:"0 2px 6px rgba(0,48,135,0.3)",whiteSpace:"nowrap"}}>
+                            ← Back to Admin Mode
+                          </button>
+                        )}
+                        {!isAdminClose && isReconcile && !pendingPastCleared && (
                           <button onClick={handleAfterReconcile} style={{
                             padding:"6px 16px",background:C.blue,color:"#FFF",border:"none",
                             borderRadius:6,fontSize:12,fontWeight:600,cursor:"pointer",
@@ -910,50 +936,87 @@ export default function DrawerBalancing() {
 
                     {/* Discrepancy / Close bar */}
                     {isClosing && (
-                      <div style={{
-                        display:"flex",justifyContent:"space-between",alignItems:"center",
-                        padding:"16px 20px",
-                        background: hasDiff
-                          ? "linear-gradient(90deg,#FEF2F2,#FFF5F5)"
-                          : "linear-gradient(90deg,#F0FDF4,#F6FEF9)",
-                        borderTop:`2px solid ${hasDiff?"#FECACA":C.greenBorder}`,
-                      }}>
-                        <div style={{display:"flex",alignItems:"center",gap:12}}>
-                          <div style={{width:36,height:36,borderRadius:"50%",
-                            background:hasDiff?"#FEE2E2":"#D1FAE5",
-                            display:"flex",alignItems:"center",justifyContent:"center",
-                            color:hasDiff?C.red:C.green}}>
-                            {hasDiff ? <Icon.Alert s={17}/> : <Icon.Check s={17}/>}
-                          </div>
-                          <div>
-                            <div style={{fontSize:14,fontWeight:700,color:hasDiff?C.red:C.green}}>
-                              {hasDiff
-                                ? <>Discrepancy of <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(Math.abs(disc))}</span></>
-                                : "Drawer Balanced — Ready to Close"}
-                            </div>
-                            {hasDiff && (
-                              <div style={{fontSize:11,color:C.inkSoft,marginTop:2}}>
-                                System expects <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(sysTotal+pickTotal)}</span>
-                                {" · "}Drawer total is <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(drTotal)}</span>
-                                {" · "}Supervisor approval required
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <button onClick={handleCloseOut} style={{
-                          padding:"10px 22px",
-                          background: hasDiff
-                            ? "linear-gradient(135deg,#DC2626,#B91C1C)"
-                            : "linear-gradient(135deg,#16A34A,#15803D)",
-                          color:"#FFF",border:"none",borderRadius:8,
-                          fontSize:13,fontWeight:700,cursor:"pointer",
-                          display:"flex",alignItems:"center",gap:7,
-                          boxShadow:hasDiff?"0 2px 8px rgba(185,28,28,0.3)":"0 2px 8px rgba(21,128,61,0.3)",
+                      ovrApproved ? (
+                        /* Override was approved by supervisor — CSR confirms final close */
+                        <div style={{
+                          display:"flex",justifyContent:"space-between",alignItems:"center",
+                          padding:"16px 20px",
+                          background:"linear-gradient(90deg,#F0FDF4,#F6FEF9)",
+                          borderTop:`2px solid ${C.greenBorder}`,
                         }}>
-                          {hasDiff ? <Icon.Alert s={13}/> : <Icon.Check s={13}/>}
-                          {hasDiff ? "Request Override & Close" : "Confirm Close Out"}
-                        </button>
-                      </div>
+                          <div style={{display:"flex",alignItems:"center",gap:12}}>
+                            <div style={{width:36,height:36,borderRadius:"50%",
+                              background:"#D1FAE5",display:"flex",alignItems:"center",
+                              justifyContent:"center",color:C.green}}>
+                              <Icon.Check s={17}/>
+                            </div>
+                            <div>
+                              <div style={{fontSize:14,fontWeight:700,color:C.green}}>
+                                Override Approved by {ovrSupervisorName}
+                              </div>
+                              <div style={{fontSize:11,color:C.inkSoft,marginTop:2}}>
+                                Discrepancy of <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(Math.abs(disc))}</span>
+                                {" "}has been approved — confirm to finalize close
+                              </div>
+                            </div>
+                          </div>
+                          <button onClick={()=>setPhase("closed")} style={{
+                            padding:"10px 22px",
+                            background:"linear-gradient(135deg,#16A34A,#15803D)",
+                            color:"#FFF",border:"none",borderRadius:8,
+                            fontSize:13,fontWeight:700,cursor:"pointer",
+                            display:"flex",alignItems:"center",gap:7,
+                            boxShadow:"0 2px 8px rgba(21,128,61,0.3)",
+                          }}>
+                            <Icon.Check s={13}/> Confirm Close Out
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{
+                          display:"flex",justifyContent:"space-between",alignItems:"center",
+                          padding:"16px 20px",
+                          background: hasDiff
+                            ? "linear-gradient(90deg,#FEF2F2,#FFF5F5)"
+                            : "linear-gradient(90deg,#F0FDF4,#F6FEF9)",
+                          borderTop:`2px solid ${hasDiff?"#FECACA":C.greenBorder}`,
+                        }}>
+                          <div style={{display:"flex",alignItems:"center",gap:12}}>
+                            <div style={{width:36,height:36,borderRadius:"50%",
+                              background:hasDiff?"#FEE2E2":"#D1FAE5",
+                              display:"flex",alignItems:"center",justifyContent:"center",
+                              color:hasDiff?C.red:C.green}}>
+                              {hasDiff ? <Icon.Alert s={17}/> : <Icon.Check s={17}/>}
+                            </div>
+                            <div>
+                              <div style={{fontSize:14,fontWeight:700,color:hasDiff?C.red:C.green}}>
+                                {hasDiff
+                                  ? <>Discrepancy of <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(Math.abs(disc))}</span></>
+                                  : "Drawer Balanced — Ready to Close"}
+                              </div>
+                              {hasDiff && (
+                                <div style={{fontSize:11,color:C.inkSoft,marginTop:2}}>
+                                  System expects <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(sysTotal+pickTotal)}</span>
+                                  {" · "}Drawer total is <span style={{fontVariantNumeric:"tabular-nums"}}>{fmt(drTotal)}</span>
+                                  {" · "}Supervisor approval required
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <button onClick={handleCloseOut} style={{
+                            padding:"10px 22px",
+                            background: hasDiff
+                              ? "linear-gradient(135deg,#DC2626,#B91C1C)"
+                              : "linear-gradient(135deg,#16A34A,#15803D)",
+                            color:"#FFF",border:"none",borderRadius:8,
+                            fontSize:13,fontWeight:700,cursor:"pointer",
+                            display:"flex",alignItems:"center",gap:7,
+                            boxShadow:hasDiff?"0 2px 8px rgba(185,28,28,0.3)":"0 2px 8px rgba(21,128,61,0.3)",
+                          }}>
+                            {hasDiff ? <Icon.Alert s={13}/> : <Icon.Check s={13}/>}
+                            {hasDiff ? "Request Override & Close" : "Confirm Close Out"}
+                          </button>
+                        </div>
+                      )
                     )}
                   </div>
                 </div>{/* end inner layout wrapper */}
@@ -1272,7 +1335,7 @@ export default function DrawerBalancing() {
           st={st} sysTotal={sysTotal} drawer={drawer}
           pickups={pickups} pickTotal={pickTotal}
           drTotal={drTotal} drNet={drNet} disc={disc} hasDiff={hasDiff}
-          isReconcile={isReconcile}
+          isReconcile={isReconcile} ovrSupervisorName={ovrSupervisorName}
           onClose={()=>setShowPrintReport(false)}
         />
       )}
@@ -1281,10 +1344,10 @@ export default function DrawerBalancing() {
 }
 
 /* ─── Supervisor Admin View ─────────────────────────────────────────────────── */
-function SupervisorAdminView({supvName,supvLocation,setSupvLocation,supvCsr,setSupvCsr,onExit,onCloseDrawer}) {
+function SupervisorAdminView({supvName,supvLocation,setSupvLocation,supvCsr,setSupvCsr,onExit,onCloseDrawer,closedByAdminIds=[]}) {
   const csrs     = CSR_BY_LOCATION[supvLocation] || [];
   const filtered = DEMO_OPEN_DRAWERS.filter(d=>
-    d.location===supvLocation && (!supvCsr || d.csr===supvCsr)
+    d.location===supvLocation && (!supvCsr || d.csr===supvCsr) && !closedByAdminIds.includes(d.id)
   );
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",background:C.bg,fontFamily:SANS,overflow:"hidden"}}>
@@ -1587,7 +1650,7 @@ function CashCalculatorModal({calcBills,setCalcBills,calcCoins,setCalcCoins,onAp
 }
 
 /* ─── Print Report Modal ─────────────────────────────────────────────────────── */
-function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,sysTotal,drawer,pickups,pickTotal,drTotal,drNet,disc,hasDiff,isReconcile,onClose}) {
+function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,sysTotal,drawer,pickups,pickTotal,drTotal,drNet,disc,hasDiff,isReconcile,ovrSupervisorName,onClose}) {
   const Row = ({label,value,bold,color}) => (
     <div style={{display:"flex",justifyContent:"space-between",padding:"4px 0",
       borderBottom:"1px solid #F3F4F6"}}>
@@ -1701,6 +1764,10 @@ function PrintReportModal({drawerDate,drawerNum,openedAt,drawerCsr,beginVal,st,s
               <Row label="Status"
                 value={hasDiff ? "CLOSED WITH SUPERVISOR OVERRIDE" : "CLOSED — BALANCED"}
                 bold color={hasDiff?"#C62828":"#166534"}/>
+              {hasDiff && ovrSupervisorName && (
+                <Row label="Override Approved By" value={ovrSupervisorName}
+                  bold color="#166534"/>
+              )}
             </Section>
 
             <div style={{textAlign:"center",marginTop:16,fontSize:10,color:"#9CA3AF"}}>
