@@ -1964,25 +1964,33 @@ function DrCell({label, field, value, editable, onChange, onBlur}) {
       borderBottom:`1px solid ${C.border}`,
     }}>
       <span style={{fontSize:12, color: editable ? C.inkMid : C.inkFaint}}>{label}</span>
-      <input
-        className="dr-input"
-        type="text"
-        value={value ?? ""}
-        disabled={!editable}
-        onChange={e => onChange(field, e.target.value)}
-        onBlur={() => onBlur(field)}
-        placeholder="0.00"
-        style={{
-          width:108, textAlign:"right",
-          border:`1.5px solid ${editable ? C.borderMid : "transparent"}`,
-          borderRadius:5, padding:"4px 8px",
+      <div style={{position:"relative", display:"inline-flex", alignItems:"center"}}>
+        <span style={{
+          position:"absolute", left:8, top:"50%", transform:"translateY(-50%)",
           fontSize:13, fontFamily:SANS,
-          background: editable ? "#FFF" : "transparent",
-          color: editable ? C.ink : C.inkFaint,
-          cursor: editable ? "text" : "default",
-          transition:"border-color .15s, box-shadow .15s",
-        }}
-      />
+          color: editable ? C.inkSoft : C.inkFaint,
+          pointerEvents:"none", userSelect:"none",
+        }}>$</span>
+        <input
+          className="dr-input"
+          type="text"
+          value={value ?? ""}
+          disabled={!editable}
+          onChange={e => onChange(field, e.target.value)}
+          onBlur={() => onBlur(field)}
+          placeholder="0.00"
+          style={{
+            width:108, textAlign:"right",
+            border:`1.5px solid ${editable ? C.borderMid : "transparent"}`,
+            borderRadius:5, padding:"4px 8px 4px 18px",
+            fontSize:13, fontFamily:SANS,
+            background: editable ? "#FFF" : "transparent",
+            color: editable ? C.ink : C.inkFaint,
+            cursor: editable ? "text" : "default",
+            transition:"border-color .15s, box-shadow .15s",
+          }}
+        />
+      </div>
     </div>
   );
 }
